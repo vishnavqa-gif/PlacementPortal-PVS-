@@ -1,0 +1,70 @@
+=========================================================
+PLACEMENT PORTAL - DEPLOYMENT STEPS
+=========================================================
+
+YOUR NEON DATABASE URL:
+postgresql://neondb_owner:npg_5vEfncjreM6K@ep-frosty-field-aingwp8h-pooler.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require
+
+=========================================================
+STEP 1: DATABASE (already done if you ran FINAL_SETUP.sql)
+=========================================================
+If not done:
+- Go to neon.tech -> SQL Editor
+- Paste database/COMPLETE_SETUP.sql -> Run
+- Paste database/SEED_DATA.sql -> Run
+
+=========================================================
+STEP 2: DEPLOY BACKEND TO RENDER (free)
+=========================================================
+1. Go to render.com -> Sign up free
+2. Click "New +" -> "Web Service"
+3. Connect GitHub (upload this project to GitHub first)
+   OR use "Deploy from existing repo"
+4. Settings:
+   - Root Directory: backend
+   - Build Command: pip install -r requirements.txt
+   - Start Command: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+5. Add Environment Variables (click "Environment"):
+   DATABASE_URL = postgresql+asyncpg://neondb_owner:npg_5vEfncjreM6K@ep-frosty-field-aingwp8h-pooler.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require
+   SYNC_DATABASE_URL = postgresql://neondb_owner:npg_5vEfncjreM6K@ep-frosty-field-aingwp8h-pooler.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require
+   SECRET_KEY = PlacementPortal2024SuperSecretKeyXYZ123
+   ALGORITHM = HS256
+   ACCESS_TOKEN_EXPIRE_MINUTES = 60
+   ALLOWED_ORIGINS = https://your-app.vercel.app,http://localhost:3000
+   ENVIRONMENT = production
+   DEBUG = false
+6. Click "Create Web Service"
+7. Wait 3-5 minutes -> you get a URL like: https://placement-portal-api.onrender.com
+
+=========================================================
+STEP 3: DEPLOY FRONTEND TO VERCEL (free)
+=========================================================
+1. Go to vercel.com -> Sign up free
+2. Click "New Project"
+3. Upload/connect the frontend folder
+4. Settings:
+   - Root Directory: frontend
+   - Framework: Vite
+   - Build Command: npm run build
+   - Output Directory: dist
+5. Add Environment Variable:
+   VITE_API_URL = https://placement-portal-api.onrender.com/api/v1
+   (use your actual Render URL from Step 2)
+6. Click Deploy
+7. You get a URL like: https://placement-portal.vercel.app
+
+=========================================================
+STEP 4: UPDATE CORS ON RENDER
+=========================================================
+Go to Render -> your service -> Environment
+Update ALLOWED_ORIGINS = https://placement-portal.vercel.app,http://localhost:3000
+Click "Save Changes" -> Render will redeploy automatically
+
+=========================================================
+LOGIN CREDENTIALS
+=========================================================
+Super Admin: superadmin@placementportal.com / SuperAdmin@123
+Admin:       admin@placementportal.com / Admin@123
+Student:     Register at /register
+
+=========================================================
